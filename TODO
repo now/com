@@ -1,0 +1,25 @@
+
+class WIN32OLE_TYPE
+  def self.enums(id)
+    ole_classes(id).select{ |c| c.visible? and c.ole_type == 'Enum' }
+  end
+
+  def constants
+    variables.select{ |v| v.visible? and v.variable_kind == 'CONSTANT' }
+  end
+end
+
+class WIN32OLE_VARIABLE
+  def const_name
+    name.sub(/^./){ |l| l.upcase }
+  end
+end
+
+And in class.rb:
+
+    rescue RuntimeError
+      WIN32OLE_TYPE.enums(program_id).each do |enum|
+        enum.constants.each do |constant|
+          modul.const_set constant.const_name, constant.value
+        end
+      end
