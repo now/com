@@ -10,6 +10,7 @@ module COM
   autoload :Error, 'com/error'
   autoload :Events, 'com/events'
   autoload :PatternError, 'com/patternerror'
+  autoload :Version, 'com/version'
 
   COMCodePageToIconvCharset = {
     WIN32OLE::CP_UTF8 => 'UTF-8'
