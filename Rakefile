@@ -22,7 +22,7 @@ COM is an object-oriented wrapper around WIN32OLE that makes it easier
 to add behavior to WIN32OLE objects.
 EOD
 
-  s.files = FileList['{lib,test}/**/*.rb', '[A-Z]*$']
+  s.files = FileList['{lib,test}/**/*.rb', '[A-Z]*']
 
   s.add_development_dependency 'yard', '>= 0.2.3.5'
 end
