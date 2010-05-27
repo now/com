@@ -15,21 +15,20 @@ class COM::MethodInvocationError < COM::Error
     new(m[4], m[1], m[3], m[2].to_i(16), m[5].to_i(16), m[6])
   end
 
-  attr_reader :message, :method, :server, :error_code, :hresult_error_code,
-              :hresult_message
-
-  def initialize(message, method = "", server = "", error_code = -1,
-                 hresult_error_code = -1, hresult_message = "")
+  def initialize(message, method = "", server = "", code = -1,
+                 hresult_code = -1, hresult_message = "")
     super message
     @message = message
     @method = method
     @server = server
-    @error_code = error_code
-    @hresult_error_code = hresult_error_code
+    @code = code
+    @hresult_code = hresult_code
     @hresult_message = hresult_message
   end
 
   def to_s
-    "%s:%s:%s (0x%x)" % [@server, @method, @message, @error_code]
+    "%s:%s:%s (0x%x)" % [@server, @method, @message, @code]
   end
+
+  attr_reader :message, :method, :server, :code, :hresult_code, :hresult_message
 end

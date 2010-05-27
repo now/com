@@ -26,11 +26,11 @@ EOM
   end
 
   expect 0x123abcDE do
-    COM::Error.from(M).error_code
+    COM::Error.from(M).code
   end
 
   expect 0x123abcDE do
-    COM::Error.from(M).hresult_error_code
+    COM::Error.from(M).hresult_code
   end
 
   expect 'hresult message' do
