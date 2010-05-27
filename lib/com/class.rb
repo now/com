@@ -10,8 +10,8 @@ class COM::Class
     @id = '%s.%s' % matches[1..2]
   end
 
-  def self.connect(connect)
-    @connect = connect
+  def self.connect
+    @connect = true
   end
 
   def self.connect?

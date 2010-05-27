@@ -38,12 +38,12 @@ Expectations do
   end
 
   expect true do
-    Class.new(COM::Class).connect(true)
+    Class.new(COM::Class).connect
   end
 
   expect true do
     Class.new(COM::Class){
-      connect true
+      connect
     }.connect?
   end
 
