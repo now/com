@@ -66,6 +66,10 @@ class COM::Class
     end
   end
 
+protected
+
+  attr_reader :object
+
 private
 
   def method_missing(*args)
