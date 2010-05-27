@@ -57,7 +57,6 @@ private
     end
     @constants_loaded = true
   end
-  private_class_method :load_constants
 
   def self.nesting
     result = []
