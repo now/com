@@ -13,10 +13,6 @@ class COM::Error < RuntimeError
     new error.message
   end
 
-  (class << self; self; end).class_eval do
-    protected :replaces?, :replace
-  end
-
   def self.inherited(error)
     errors.unshift error
   end
