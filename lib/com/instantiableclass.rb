@@ -3,7 +3,7 @@
 class COM::InstantiableClass < COM::Class
   def self.program_id(id = nil)
     @id = id if id
-    return @id if @id
+    return @id if instance_variable_defined? :@id
     raise ArgumentError,
       'No COM program ID for class: %s' % self unless
         matches = /^.*?([^:]+)::([^:]+)$/.match(name)
@@ -15,7 +15,7 @@ class COM::InstantiableClass < COM::Class
   end
 
   def self.connect?
-    @connect
+    @connect ||= false
   end
 
   def self.constants(constants)
@@ -28,6 +28,7 @@ class COM::InstantiableClass < COM::Class
   end
 
   def initialize(options = {})
+    @connected = false
     connect if options.fetch(:connect, self.class.connect?)
     @object = COM.new(self.class.program_id) unless connected?
     self.class.load_constants(@object) if
@@ -47,7 +48,7 @@ private
   end
 
   def self.load_constants(object)
-    return if @constants_loaded
+    return if constants_loaded?
     modul = nesting[-2]
     saved_verbose, $VERBOSE = $VERBOSE, nil
     begin
@@ -56,6 +57,10 @@ private
       $VERBOSE = saved_verbose
     end
     @constants_loaded = true
+  end
+
+  def self.constants_loaded?
+    @constants_loaded ||= false
   end
 
   def self.nesting
