@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'facets/kernel/silence'
-
 require 'win32ole'
 WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
