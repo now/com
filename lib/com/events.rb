@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 class COM::Events
-  def initialize(object, interface)
+  def initialize(com, interface)
     @observers = Hash.new{ [] }
-    @events = WIN32OLE_EVENT.new(object, interface)
+    @events = WIN32OLE_EVENT.new(com, interface)
   end
 
   def register(*events)

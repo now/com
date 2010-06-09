@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 class COM::Class
-  def initialize(object)
-    @object = object
+  def initialize(com)
+    @com = com
   end
 
   def respond_to?(method)
-    object.ole_method(method.to_s) rescue false
+    com.ole_method(method.to_s) rescue false
   end
 
   # Set a bunch of properties, yield, and then restore them.  If an exception
@@ -17,15 +17,15 @@ class COM::Class
     saved_properties = []
     begin
       properties.to_hash.each do |property, value|
-        saved_properties << [property, object[property]]
-        object[property] = value
+        saved_properties << [property, com[property]]
+        com[property] = value
       end
       yield
     ensure
       previous_error = $!
       begin
         saved_properties.reverse.each do |property, value|
-          begin object[property] = value; rescue WIN32OLERuntimeError; end
+          begin com[property] = value; rescue WIN32OLERuntimeError; end
         end
       rescue
         raise if not previous_error
@@ -35,7 +35,7 @@ class COM::Class
 
 protected
 
-  attr_reader :object
+  attr_reader :com
 
 private
 

@@ -5,8 +5,8 @@ require 'lookout'
 require 'com'
 
 Expectations do
-  expect WIN32OLE_EVENT.to.receive(:new).with(:object, :interface) do
-    COM::Events.new(:object, :interface)
+  expect WIN32OLE_EVENT.to.receive(:new).with(:com, :interface) do
+    COM::Events.new(:com, :interface)
   end
 
   expect mock.to.receive(:on_event).with(:on_something) do |o|

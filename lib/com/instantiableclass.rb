@@ -30,8 +30,8 @@ class COM::InstantiableClass < COM::Class
   def initialize(options = {})
     @connected = false
     connect if options.fetch(:connect, self.class.connect?)
-    @object = COM.new(self.class.program_id) unless connected?
-    self.class.load_constants(@object) if
+    @com = COM.new(self.class.program_id) unless connected?
+    self.class.load_constants(com) if
       options.fetch(:constants, self.class.constants?)
   end
 
@@ -42,17 +42,17 @@ class COM::InstantiableClass < COM::Class
 private
 
   def connect
-    @object = COM.connect(self.class.program_id)
+    @com = COM.connect(self.class.program_id)
     @connected = true
   rescue COM::OperationUnavailableError
   end
 
-  def self.load_constants(object)
+  def self.load_constants(com)
     return if constants_loaded?
     modul = nesting[-2]
     saved_verbose, $VERBOSE = $VERBOSE, nil
     begin
-      WIN32OLE.const_load object, modul
+      WIN32OLE.const_load com, modul
     ensure
       $VERBOSE = saved_verbose
     end
