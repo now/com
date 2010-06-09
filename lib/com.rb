@@ -8,6 +8,7 @@ module COM
   autoload :Error, 'com/error'
   autoload :Events, 'com/events'
   autoload :InstantiableClass, 'com/instantiableclass'
+  autoload :MethodMissing, 'com/methodmissing'
   autoload :PatternError, 'com/patternerror'
   autoload :Version, 'com/version'
   autoload :Wrapper, 'com/wrapper'
@@ -23,15 +24,15 @@ module COM
   end
 
   def self.connect(id)
-    WIN32OLE.connect(id)
+    WIN32OLE.connect(id).extend MethodMissing
   rescue WIN32OLERuntimeError => e
-    COM::Error.from(e)
+    raise Error.from(e)
   end
 
   def self.new(id, host = nil)
-    WIN32OLE.new(id, host)
+    WIN32OLE.new(id, host).extend MethodMissing
   rescue WIN32OLERuntimeError => e
-    COM::Error.from(e)
+    raise Error.from(e)
   end
 end
 

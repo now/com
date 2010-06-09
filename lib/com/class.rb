@@ -40,8 +40,8 @@ protected
 private
 
   def method_missing(*args)
-    object.method_missing(*args)
+    com.method_missing(*args)
   rescue WIN32OLERuntimeError => e
-    COM::Error.from(e)
+    raise COM::Error.from(e)
   end
 end
