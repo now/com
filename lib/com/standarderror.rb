@@ -6,7 +6,7 @@ module COM::StandardError
     Class.new(COM::Error) do
       extend COM::PatternError
 
-      pattern %r{HRESULT\serror\scode:(0x(?i:#{code.to_s(16)}))}xu
+      pattern %r{^(.*)\n\s*HRESULT\serror\scode:(0x(?i:#{code.to_s(16)}))}xu
 
       (class << self; self; end).class_eval do
         define_method :replace do |error|
@@ -29,7 +29,7 @@ module COM::HResultError
     COM.const_set error, Class.new(COM::Error){
       extend COM::PatternError
 
-      pattern %r{HRESULT\serror\scode:(0x(?i:#{code.to_s(16)}))}xu
+      pattern %r{^(.*)\n\s*HRESULT\serror\scode:(0x(?i:#{code.to_s(16)}))}xu
 
       (class << self; self; end).class_eval do
         define_method :replace do |error|
