@@ -30,7 +30,7 @@ class COM::InstantiableClass < COM::Class
   def initialize(options = {})
     @connected = false
     connect if options.fetch(:connect, self.class.connect?)
-    @com = COM.new(self.class.program_id) unless connected?
+    self.com = COM.new(self.class.program_id) unless connected?
     self.class.load_constants(com) if
       options.fetch(:constants, self.class.constants?)
   end
@@ -42,7 +42,7 @@ class COM::InstantiableClass < COM::Class
 private
 
   def connect
-    @com = COM.connect(self.class.program_id)
+    self.com = COM.connect(self.class.program_id)
     @connected = true
   rescue COM::OperationUnavailableError
   end

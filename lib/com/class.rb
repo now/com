@@ -2,7 +2,7 @@
 
 class COM::Class
   def initialize(com)
-    @com = com
+    self.com = com
   end
 
   def respond_to?(method)
@@ -25,7 +25,7 @@ class COM::Class
       previous_error = $!
       begin
         saved_properties.reverse.each do |property, value|
-          begin com[property] = value; rescue WIN32OLERuntimeError; end
+          begin com[property] = value; rescue COM::Error; end
         end
       rescue
         raise if not previous_error
@@ -37,11 +37,13 @@ protected
 
   attr_reader :com
 
+  def com=(com)
+    @com = com.extend(COM::MethodMissing)
+  end
+
 private
 
   def method_missing(*args)
     com.method_missing(*args)
-  rescue WIN32OLERuntimeError => e
-    raise COM::Error.from(e)
   end
 end

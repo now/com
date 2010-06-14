@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 class COM::Error < RuntimeError
-  def self.from(error)
-    errors.find{ |replacement| replacement.replaces? error }.replace(error)
+  def self.from(error, backtrace = nil)
+    errors.find{ |replacement| replacement.replaces? error }.replace(error).tap{ |e|
+      e.set_backtrace backtrace if backtrace
+    }
   end
 
   def self.replaces?(error)
