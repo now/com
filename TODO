@@ -23,3 +23,6 @@ And in class.rb:
           modul.const_set constant.const_name, constant.value
         end
       end
+
+Should add Object#to_com and stuff.  Also, #to_com for COM::Class should be the
+com object.  String#to_com returns self, for example

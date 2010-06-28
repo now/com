@@ -9,10 +9,15 @@ class COM::Events
 
   def register(*events)
     events.each do |event|
-      @events.on_event event do |*args|
-        @observers[event].each do |observer|
-          observer.call(*args)
+      saved_verbose, $VERBOSE = $VERBOSE, nil
+      begin
+        @events.on_event event do |*args|
+          @observers[event].each do |observer|
+            observer.call(*args)
+          end
         end
+      ensure
+        $VERBOSE = saved_verbose
       end
     end
     self
