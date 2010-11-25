@@ -1,47 +1,67 @@
 # -*- coding: utf-8 -*-
 
-require 'lookout'
-
-require 'com'
-
 Expectations do
-  M = stub :message => <<EOM
-method
+  expect COM::MethodInvocationError do
+    COM::Error.from(stub(:message => %{method
   OLE error code:123abcDE in server
     message
   HRESULT error code:0x123abcDE
-    hresult message
-EOM
-
-  expect COM::MethodInvocationError do
-    COM::Error.from(M)
+    hresult message}))
   end
 
   expect 'method' do
-    COM::Error.from(M).method
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).method
   end
 
   expect 'server' do
-    COM::Error.from(M).server
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).server
   end
 
   expect 0x123abcDE do
-    COM::Error.from(M).code
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).code
   end
 
   expect 0x123abcDE do
-    COM::Error.from(M).hresult_code
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).hresult_code
   end
 
   expect 'hresult message' do
-    COM::Error.from(M).hresult_message
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).hresult_message
   end
 
   expect 'message' do
-    COM::Error.from(M).message
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).message
   end
 
   expect 'server:method:message (0x123abcde)' do
-    COM::Error.from(M).to_s
+    COM::Error.from(stub(:message => %{method
+  OLE error code:123abcDE in server
+    message
+  HRESULT error code:0x123abcDE
+    hresult message})).to_s
   end
 end

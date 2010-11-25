@@ -19,7 +19,7 @@ module COM
 
   def self.charset
     COMCodePageToIconvCharset[WIN32OLE.codepage] or
-      raise 'No iconv charset associated with current COM codepage: ' %
+      raise 'no iconv charset associated with current COM codepage: %s' %
         WIN32OLE.codepage
   end
 

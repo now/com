@@ -1,27 +1,23 @@
 # -*- coding: utf-8 -*-
 
-require 'lookout'
-
-require 'com'
-
 Expectations do
   expect 'UTF-8' do
-    WIN32OLE.stubs(:codepage).returns(WIN32OLE::CP_UTF8)
+    stub(WIN32OLE).codepage{ WIN32OLE::CP_UTF8 }
     COM.charset
   end
 
   expect RuntimeError do
-    WIN32OLE.stubs(:codepage).returns(:unknown_encoding)
+    stub(WIN32OLE).codepage{ :unknown_encoding }
     COM.charset
   end
 
   expect COM::Error do
-    WIN32OLE.stubs(:connect).raises(WIN32OLERuntimeError)
-    COM.connect(ignore)
+    stub(WIN32OLE).connect{ raise WIN32OLERuntimeError }
+    COM.connect(stub)
   end
 
   expect COM::Error do
-    WIN32OLE.stubs(:new).raises(WIN32OLERuntimeError)
-    COM.new(ignore)
+    stub(WIN32OLE).new{ raise WIN32OLERuntimeError }
+    COM.new(stub)
   end
 end

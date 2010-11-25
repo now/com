@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'lookout'
-
-require 'com'
-
 Expectations do
   expect NotImplementedError do
     COM::Error.from(stub(:message => "\nHRESULT error code:0x80004001\n"))
