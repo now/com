@@ -4,11 +4,11 @@ require 'win32ole'
 WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
 module COM
-  autoload :Class, 'com/class'
   autoload :Error, 'com/error'
   autoload :Events, 'com/events'
-  autoload :InstantiableClass, 'com/instantiableclass'
+  autoload :Instantiable, 'com/instantiable'
   autoload :MethodMissing, 'com/methodmissing'
+  autoload :Object, 'com/object'
   autoload :PatternError, 'com/patternerror'
   autoload :Version, 'com/version'
   autoload :Wrapper, 'com/wrapper'

@@ -6,102 +6,102 @@ require 'com'
 
 Expectations do
   expect 'Program.Class' do
-    Class.new(COM::InstantiableClass).program_id('Program.Class')
+    Class.new(COM::Instantiable).program_id('Program.Class')
   end
 
   expect 'Program.Class' do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       program_id 'Program.Class'
     }.program_id
   end
 
   expect ArgumentError do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       stubs(:name).returns('Class')
     }.program_id
   end
 
   expect 'Program.Class' do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       stubs(:name).returns('Program::Class')
     }.program_id
   end
 
   expect 'Program.Class' do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       stubs(:name).returns('Vendor::Program::Class')
     }.program_id
   end
 
   expect false do
-    Class.new(COM::InstantiableClass).connect?
+    Class.new(COM::Instantiable).connect?
   end
 
   expect true do
-    Class.new(COM::InstantiableClass).connect
+    Class.new(COM::Instantiable).connect
   end
 
   expect true do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       connect
     }.connect?
   end
 
   expect true do
-    Class.new(COM::InstantiableClass).constants?
+    Class.new(COM::Instantiable).constants?
   end
 
   expect true do
-    Class.new(COM::InstantiableClass).constants(true)
+    Class.new(COM::Instantiable).constants(true)
   end
 
   expect true do
-    Class.new(COM::InstantiableClass){
+    Class.new(COM::Instantiable){
       constants true
     }.constants?
   end
 
   expect COM.to.receive(:connect).with('A.B').returns(ignore) do
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:connect => true, :constants => false)
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:connect => true, :constants => false)
   end
 
   expect COM.to.receive(:new).never do
     COM.stubs(:connect).returns(ignore)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:connect => true, :constants => false)
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:connect => true, :constants => false)
   end
 
   expect COM.to.receive(:new).with('A.B').returns(ignore) do
     COM.stubs(:connect).raises(COM::OperationUnavailableError)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:connect => true, :constants => false)
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:connect => true, :constants => false)
   end
 
   expect COM.to.receive(:new).with('A.B').returns(ignore) do
     COM.stubs(:connect).raises(COM::OperationUnavailableError)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:constants => false)
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:constants => false)
   end
 
   expect true do
     COM.stubs(:connect).returns(ignore)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:connect => true, :constants => false).connected?
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:connect => true, :constants => false).connected?
   end
 
   expect false do
     COM.stubs(:connect).raises(COM::OperationUnavailableError)
     COM.stubs(:new).returns(ignore)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:connect => true, :constants => false).connected?
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:connect => true, :constants => false).connected?
   end
 
   expect false do
     COM.stubs(:new).returns(ignore)
-    Class.new(COM::InstantiableClass){ program_id 'A.B' }.new(:constants => false).connected?
+    Class.new(COM::Instantiable){ program_id 'A.B' }.new(:constants => false).connected?
   end
 
-  expect(Class.new(COM::InstantiableClass){ program_id 'A.B' }.to.receive(:load_constants)) do |o|
+  expect(Class.new(COM::Instantiable){ program_id 'A.B' }.to.receive(:load_constants)) do |o|
     COM.stubs(:new).returns(ignore)
     o.new
   end
 
-  expect(Class.new(COM::InstantiableClass){ program_id 'A.B' }.to.receive(:load_constants).never) do |o|
+  expect(Class.new(COM::Instantiable){ program_id 'A.B' }.to.receive(:load_constants).never) do |o|
     COM.stubs(:new).returns(ignore)
     o.new(:constants => false)
   end

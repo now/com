@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class COM::Class
+class COM::Object
   def initialize(com)
     self.com = com
   end

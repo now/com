@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class COM::InstantiableClass < COM::Class
+class COM::Instantiable < COM::Object
   def self.program_id(id = nil)
     @id = id if id
     return @id if instance_variable_defined? :@id
