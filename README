@@ -1,0 +1,40 @@
+# COM #
+
+COM is an object-oriented wrapper around WIN32OLE.  COM makes it easy to add
+behavior to WIN32OLE objects, making them easier to work with from Ruby.
+
+    module Word end
+
+    class Word::Application < COM::Instantiable
+      def without_interaction
+        with_properties('displayalerts' => Word::WdAlertsNone){ yield }
+      end
+
+      def documents
+        Word::Documents.new(com.documents)
+      end
+
+      def quit(saving = Word::WdDoNotSaveChanges, *args)
+        com.quit saving, *args
+      end
+    end
+
+
+## Installation ##
+
+Install COM with
+
+    % gem install com
+
+
+## License ##
+
+You may use, copy and redistribute this library under the same [terms][1] as
+Ruby itself.
+
+[1]: http://www.ruby-lang.org/en/LICENSE.txt
+
+
+## Contributors ##
+
+  * Nikolai Weibull
