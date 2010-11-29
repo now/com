@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 
 class COM::Error < RuntimeError
-  def self.from(error, backtrace = nil)
-    errors.find{ |replacement| replacement.replaces? error }.replace(error).tap{ |e|
-      e.set_backtrace backtrace if backtrace
-    }
-  end
+  class << self
+    def from(error, backtrace = nil)
+      errors.find{ |replacement| replacement.replaces? error }.replace(error).tap{ |e|
+        e.set_backtrace backtrace if backtrace
+      }
+    end
 
-  def self.replaces?(error)
-    true
-  end
+    def replaces?(error)
+      true
+    end
 
-  def self.replace(error)
-    new error.message
-  end
+    def replace(error)
+      new(error.message)
+    end
 
-  def self.inherited(error)
-    errors.unshift error
-  end
-  private_class_method :inherited
+  private
 
-  def self.errors
-    @@errors ||= [self]
+    def inherited(error)
+      errors.unshift error
+    end
+
+    def errors
+      @@errors ||= [self]
+    end
   end
-  private_class_method :errors
 end
