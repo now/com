@@ -6,7 +6,7 @@ class COM::Object
   end
 
   def respond_to?(method)
-    com.ole_method(method.to_s) rescue false
+    super(method) or (com.ole_method(method.to_s) rescue false)
   end
 
   # Set a bunch of properties, yield, and then restore them.  If an exception
