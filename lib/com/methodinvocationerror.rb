@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Represents an COM method invocation error.
 class COM::MethodInvocationError < COM::Error
   extend COM::PatternError
 

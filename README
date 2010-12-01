@@ -3,6 +3,19 @@
 COM is an object-oriented wrapper around WIN32OLE.  COM makes it easy to add
 behavior to WIN32OLE objects, making them easier to work with from Ruby.
 
+
+## Usage ##
+
+Using COM is rather straightforward.  There’s basically four concepts to keep
+track of:
+
+  1. COM objects
+  2. Instantiable COM objects
+  3. COM events
+  4. COM errors
+
+Let’s look at each concept separately, using the following example as a base.
+
     module Word end
 
     class Word::Application < COM::Instantiable
@@ -18,6 +31,178 @@ behavior to WIN32OLE objects, making them easier to work with from Ruby.
         com.quit saving, *args
       end
     end
+
+### COM Objects ###
+
+A COM::Object is a wrapper around a COM object.  It provides error
+specialization, which is discussed later and a few utility methods.  You
+typically use it to wrap COM objects that are returned by COM methods.  If we
+take the example given in the introduction, Word::Documents is a good
+candidate:
+
+    class Word::Documents < COM::Object
+      DefaultOpenOptions = {
+        'confirmconversions' => false,
+        'readonly' => true,
+        'addtorecentfiles' => false,
+        'visible' => false
+      }.freeze
+      def open(path, options = {})
+        options = DefaultOpenOptions.merge(options)
+        options['filename'] = Pathname(path).to_com
+        Word::Document.new(com.open(options))
+      end
+    end
+
+Here we override the #open method to be a bit easier to use, providing sane
+defaults for COM interaction.  Worth noting is the use of the #com method to
+access the actual COM object to invoke the #open method on it.  Also note that
+Word::Document is also a COM::Object.
+
+COM::Object provides a convenience method called #with_properties, which is
+used in the #without_interaction method above.  It lets you set properties on
+the COM::Object during the duration of a block, restoring them after it exits
+(successfully or with an error).
+
+
+### Instantiable COM Objects ###
+
+Instantiable COM objects are COM objects that we can connect to and that can be
+created.  The Word::Application object can, for example, be created.
+Instantiable COM objects should inherit from COM::Instantiable.  Instantiable
+COM objects can be told what program ID to use, whether or not to allow
+connecting to an already running object, and to load its associated constants
+upon creation.
+
+The program ID is used to determine what instantiable COM object to connect to.
+By default the name of the COM::Instantiable class’ name is used, taking the
+last two double-colon-separated components and joining them with a dot.  For
+Word::Application, the program ID is “Word.Application”.  The program ID can be
+set by using the .program_id method:
+
+    class IDontCare::ForConventions < COM::Instantiable
+      program_id 'Word.Application'
+    end
+
+The program ID can be accessed with the same method:
+
+    Word::Application.program_id # ⇒ 'Word.Application'
+
+Connecting to an already running COM object is not done by default, but is
+sometimes desirable: the COM object might take a long time to create, or some
+common state needs to be accessed.  If the default for a certain instantiable
+COM object should be to connect, this can be done using the .connect method:
+
+    class Word::Application < COM::Instantiable
+      connect
+    end
+
+If no running COM object is available, then a new COM object will be created in
+its stead.  Whether or not a class uses the connection method can be queried
+with the .connect? method:
+
+    Word::Application.connect? # ⇒ true
+
+Whether or not to load constants associated with an instantiable COM object is
+set with the .constants method:
+
+    class Word::Application < COM::Instantiable
+      constants true
+    end
+
+and can similarly be checked:
+
+    Word::Application.constants? # ⇒ true
+
+Constants are loaded by default.
+
+When an instance of the instantiable COM object is created, a check is run to
+see if constants should be loaded and whether or not they already have been
+loaded.  If they should be loaded and they haven’t already been loaded,
+they’re, you guessed it, loaded.  The constants are added to the module
+containing the COM::Instantiable.  Thus, for Word::Application, the Word module
+will contain all the constants.  Whether or not the constants have already been
+loaded can be checked with .constants_loaded?:
+
+    Word::Application.constants_loaded # ⇒ false
+
+That concludes the class-level methods.
+
+Let’s begin with the #connected? method among the instance-level methods.  This
+method queries whether or not this instance connected to an already running COM
+object:
+
+    Word::Application.new.connected? # ⇒ false
+
+This can be very important in determining how shutdown of a COM object should
+be done.  If you connected to an already COM object it might be foolish to shut
+it down if someone else is using it.
+
+The #initialize method takes a couple of options:
+
+  * connect: whether or not to connect to a running instance
+  * constants: whether or not to load constants
+
+These options will, when given, override the class-level defaults.
+
+### Events ###
+
+COM events are easily dealt with:
+
+    class Word::Application < COM::Instantiable
+      def initialize(options = {})
+        super
+        @events = COM::Events.new(com, 'ApplicationEvents',
+                                  'OnQuit')
+      end
+
+      def quit(saving = Word::WdDoNotSaveChanges, *args)
+        @events.observe('OnQuit', proc{ com.quit saving, *args }) do
+          yield if block_given?
+        end
+      end
+    end
+
+To tell you the truth this API sucks and will most likely be rewritten.  The
+reason that it is the way it is is that WIN32OLE, which COM wraps, sucks.  It’s
+event API is horrid and the implementation is buggy.  It will keep every
+registered event block in memory for ever, freeing neither the blocks nor the
+COM objects that yield the events.
+
+### Errors ###
+
+All errors generated by COM methods descend from COM::Error, except for those
+cases where a Ruby error already exists.  The following HRESULT error codes are
+turned into Ruby errors:
+
+  HRESULT Error Code | Error Class
+  -------------------|------------
+  0x80004001         | NotImplementedError
+  0x80020005         | TypeError
+  0x80020006         | NoMethodError
+  0x8002000e         | ArgumentError
+  0x800401e4         | ArgumentError
+
+There are also a couple of other HRESULT error codes that are turned into more
+specific errors than COM::Error:
+
+  HRESULT Error Code | Error Class
+  -------------------|------------
+  0x80020003         | MemberNotFoundError
+  0x800401e3         | OperationUnavailableError
+
+Finally, when a method results in any other error, a COM::MethodInvocationError
+will be raised, which can be queried for the specifics, specifically #message,
+ #method, #server, #code, #hresult_code, and #hresult_message.
+
+### Pathname ###
+
+The Pathname object receives an additional method, #to_com.  This method is
+useful for when you want to pass a Pathname object to a COM method.  Simply
+call #to_com to turn it into a String of the right encoding for COM:
+
+    Word::Application.new.documents.open(Pathname('a.docx').to_com)
+    # ⇒ Word::Document
 
 
 ## Installation ##
