@@ -12,7 +12,7 @@ class COM::Events
   # @param [Array<String>] events Names of events to register (see
   #   {#register})
   def initialize(com, interface, *events)
-    @observers = Hash.new{ [] }
+    @observers = {}
     @events = WIN32OLE_EVENT.new(com, interface)
     register(*events)
   end
@@ -30,6 +30,7 @@ class COM::Events
             observer.call(*args)
           end
         end
+        @observers[event] = []
       ensure
         $VERBOSE = saved_verbose
       end
@@ -44,7 +45,9 @@ class COM::Events
   # @yield [*args] Event arguments (specific for each event)
   # @return The result of _during_
   def observe(event, during, &block)
-    @observers[event] <<= block
+    @observers.include? event or
+      raise ArgumentError, 'event has not been registered: %s' % event
+    @observers[event] << block
     begin
       during.call
     ensure
