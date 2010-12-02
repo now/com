@@ -3,7 +3,7 @@
 # This module provides a wrapper around WIN32OLE’s #method_missing.  This
 # wrapper deals with converting errors to the appropriate type.
 #
-# This is an internal module.
+# @private
 module COM::MethodMissing
   BacktraceFilter = File.dirname(File.dirname(__FILE__)) + File::SEPARATOR
 

@@ -20,21 +20,13 @@ class COM::Error < RuntimeError
       }
     end
 
-    # Returns true if this class replaces _error_.  A class is meant to replace
-    # an error that it better represents.
-    #
-    # @param [WIN32OLERuntimeError] error The error to check against
-    # @return [Boolean] True if this class replaces _error_
+    # @private method used by {.from}.
     def replaces?(error)
       true
     end
 
-    # Replaces _error_ with a more suitable one.  The {.replaces?}
-    # method must have been called before this method and must have returned
-    # true before this method may be called.
-    #
-    # @param [WIN32OLERuntimeError] error The error to replace
-    # @return [COM::Error] A more suitable error than _error_
+  protected
+
     def replace(error)
       new(error.message)
     end

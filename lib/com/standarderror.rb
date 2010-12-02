@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# Sets up mappings between COM errors and Ruby errors.
+#
+# @private
 module COM::StandardError
   class << self
+  private
     def define(code, errorclass, message = nil, &block)
       block = proc{ |m| m[1] } unless message or block
       Class.new(COM::Error) do

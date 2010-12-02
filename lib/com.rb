@@ -60,6 +60,7 @@ module COM
 
 private
 
+  # @private
   COMCodePageToIconvCharset = {
     WIN32OLE::CP_UTF8 => 'UTF-8'
   }.freeze
