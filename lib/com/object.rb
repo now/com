@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
 
 class COM::Object
+  # Creates a new instance based on _com_.  It is important that subclasses
+  # call `super` if they override this method.
+  #
+  # @param [WIN32OLE] com A WIN32OLE Com object
   def initialize(com)
     self.com = com
   end
 
+  # Queries whether this COM object responds to _method_.
+  #
+  # @param [Symbol] method Method name to query for response
+  # @returns Whether or not this COM object responds to _method_
   def respond_to?(method)
     super(method) or (com.ole_method(method.to_s) rescue false)
   end
 
-  # Set a bunch of properties, yield, and then restore them.  If an exception
+  # Sets a bunch of properties, yield, and then restore them.  If an exception
   # is raised, any set properties are restored.
   #
   # @param [#to_hash] properties properties with values to set

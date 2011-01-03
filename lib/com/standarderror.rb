@@ -30,6 +30,9 @@ module COM::StandardError
   define 0x800401e4, ::ArgumentError
 end
 
+# Sets up mappings between HRESULT errors and COM errors.
+#
+# @private
 module COM::HResultError
   class << self
     def define(code, error, message = nil, &block)
