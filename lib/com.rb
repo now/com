@@ -69,3 +69,4 @@ end
 require 'com/methodinvocationerror'
 require 'com/pathname'
 require 'com/standarderror'
+require 'com/win32ole'

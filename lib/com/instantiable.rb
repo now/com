@@ -74,7 +74,15 @@ class COM::Instantiable < COM::Object
       modul = nesting[-2]
       saved_verbose, $VERBOSE = $VERBOSE, nil
       begin
-        WIN32OLE.const_load com, modul
+        begin
+          WIN32OLE.const_load com, modul
+        rescue RuntimeError
+          WIN32OLE_TYPE.enums(program_id).each do |enum|
+            enum.constants.each do |constant|
+              modul.const_set constant.const_name, constant.value
+            end
+          end
+        end
       ensure
         $VERBOSE = saved_verbose
       end
