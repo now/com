@@ -4,7 +4,7 @@
 class COM::MethodInvocationError < COM::Error
   extend COM::PatternError
 
-  pattern %r{^\s*(\w+)\n
+  pattern %r{^\s*(\w*)\n
               \s*OLE\serror\scode:([0-9a-fA-F]+)
               \s+in\s+([^\n]+)\n
               \s*([^\n]+)\n
