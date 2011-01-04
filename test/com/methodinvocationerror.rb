@@ -57,7 +57,7 @@ Expectations do
     hresult message})).message
   end
 
-  expect 'server:method:message (0x123abcde)' do
+  expect 'message' do
     COM::Error.from(stub(:message => %{method
   OLE error code:123abcDE in server
     message

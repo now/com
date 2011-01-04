@@ -31,18 +31,9 @@ class COM::MethodInvocationError < COM::Error
   def initialize(message, method = '', server = '', code = -1,
                  hresult_code = -1, hresult_message = '')
     super message
-    @message = message
-    @method = method
-    @server = server
-    @code = code
-    @hresult_code = hresult_code
-    @hresult_message = hresult_message
+    @method, @server, @code, @hresult_code, @hresult_message =
+      method, server, code, hresult_code, hresult_message
   end
 
-  # Creates a String representation of this error.
-  def to_s
-    '%s:%s:%s (0x%x)' % [@server, @method, @message, @code]
-  end
-
-  attr_reader :message, :method, :server, :code, :hresult_code, :hresult_message
+  attr_reader :method, :server, :code, :hresult_code, :hresult_message
 end
