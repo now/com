@@ -43,8 +43,8 @@ module COM::HResultError
         pattern %r{^\s*(.*)\n\s*HRESULT\serror\scode:(0x(?i:#{code.to_s(16)}))}xu
 
         (class << self; self; end).class_eval do
-          define_method :replace do |error|
-            m = pattern.match(error.message)
+          define_method :replace do |e|
+            m = pattern.match(e.message)
             new(message ? message : block.call(m))
           end
         end

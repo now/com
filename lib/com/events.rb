@@ -26,9 +26,10 @@ class COM::Events
       saved_verbose, $VERBOSE = $VERBOSE, nil
       begin
         @events.on_event event do |*args|
-          @observers[event].each do |observer|
-            observer.call(*args)
-          end
+          @observers[event].reduce({}){ |result, observer|
+            r = observer.call(*args)
+            result.merge!(r) if Hash === r
+          }
         end
         @observers[event] = []
       ensure

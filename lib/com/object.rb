@@ -12,15 +12,16 @@ class COM::Object
   # Queries whether this COM object responds to _method_.
   #
   # @param [Symbol] method Method name to query for response
-  # @returns Whether or not this COM object responds to _method_
+  # @return [Boolean] Whether or not this COM object responds to _method_
   def respond_to?(method)
-    super(method) or (com.ole_method(method.to_s) rescue false)
+    super or com.respond_to? method
   end
 
   # Sets a bunch of properties, yield, and then restore them.  If an exception
   # is raised, any set properties are restored.
   #
   # @param [#to_hash] properties properties with values to set
+  # @return [COM::Object] `self` */
   def with_properties(properties)
     saved_properties = []
     begin
@@ -39,6 +40,7 @@ class COM::Object
         raise if not previous_error
       end
     end
+    self
   end
 
 protected
@@ -51,7 +53,12 @@ protected
 
 private
 
-  def method_missing(*args)
-    com.method_missing(*args)
+  def method_missing(method, *args)
+    case method.to_s
+    when /=\z/
+      com.setproperty($`.encode(COM.charset), *args)
+    else
+      com.invoke(method.to_s.encode(COM.charset), *args)
+    end
   end
 end
