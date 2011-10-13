@@ -18,6 +18,8 @@ module COM
   class << self
     # Gets the iconv character set equivalent of the current COM code page.
     #
+    # @raise [RuntimeError] If no iconv charset is associated with the current
+    #   COM codepage
     # @return [String] The iconv character set
     def charset
       COMCodePageToIconvCharset[WIN32OLE.codepage] or
@@ -31,12 +33,12 @@ module COM
     # COM::Object.
     #
     # @param [String] id The program ID of the COM object to connect to
-    # @return [COM::MethodMissing] The running COM object wrapped in a
-    #   COM::MethodMissing
     # @raise [COM::Error] Any error that may have occurred while trying to
     #   connect
+    # @return [COM::MethodMissing] The running COM object wrapped in a
+    #   COM::MethodMissing
     def connect(id)
-      WIN32OLE.connect(id).extend MethodMissing
+      WIN32OLE.connect(id).extend(MethodMissing)
     rescue WIN32OLERuntimeError => e
       raise Error.from(e)
     end
@@ -48,11 +50,11 @@ module COM
     #
     # @param [String] id The program ID of the COM object to create
     # @param [String, nil] host The host of the program ID
-    # @return [COM::MethodMissing] The COM object wrapped in a COM::MethodMissing
     # @raise [COM::Error] Any error that may have occurred while trying to
     #   create the COM object
+    # @return [COM::MethodMissing] The COM object wrapped in a COM::MethodMissing
     def new(id, host = nil)
-      WIN32OLE.new(id, host).extend MethodMissing
+      WIN32OLE.new(id, host).extend(MethodMissing)
     rescue WIN32OLERuntimeError => e
       raise Error.from(e)
     end
