@@ -4,6 +4,8 @@
 # releasing an observer and thus causes an unbreakable chain of objects,
 # causing uncollectable garbage.  This class obviates most of the problems.
 class COM::Events
+  ArgumentMissing = Object.new.freeze
+
   # Creates a COM events wrapper for the COM object _com_’s _interface_.
   # Optionally, any _events_ may be given as additional arguments.
   #
@@ -22,16 +24,21 @@ class COM::Events
   # @param [Proc] during Block during which to observe _event_
   # @yield [*args] Event arguments (specific for each event)
   # @return The result of _during_
-  def observe(event, during = nil, observer = nil, &block)
-    observer ||= block
-    raise ArgumentError, 'no block given' unless observer
+  def observe(event, observer = ArgumentMissing)
+    if ArgumentMissing.equal? observer
+      register event, Proc.new
+      return self
+    end
+    return self unless observer
+    observer = observer.to_proc
     register event, observer
-    return unless during
+    return self unless block_given?
     begin
-      during.call
+      yield
     ensure
       unobserve event, observer
     end
+    self
   end
 
   def unobserve(event, observer = nil)
@@ -40,6 +47,7 @@ class COM::Events
       @interface.off_event event
       @events.delete event
     end
+    self
   end
 
   private

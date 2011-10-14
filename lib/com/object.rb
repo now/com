@@ -42,12 +42,14 @@ class COM::Object
     end
   end
 
-  def observe(event, during = nil, observer = nil, &block)
-    com.observe(event, during, observer, &block)
+  def observe(event, observer = COM::Events::ArgumentMissing, &block)
+    com.observe event, observer, &block
+    self
   end
 
   def unobserve(event, observer = nil)
-    com.unobserve(event, observer)
+    com.unobserve event, observer
+    self
   end
 
 protected
