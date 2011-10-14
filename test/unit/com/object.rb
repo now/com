@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 Expectations do
+=begin
   expect :result do
     COM::Object.new(stub).with_properties({}){ :result }
   end
@@ -24,6 +25,7 @@ Expectations do
     o[:a]
     v
   end
+=end
 
   expect StandardError do
     COM::Object.new(stub).with_properties({}){ raise StandardError }

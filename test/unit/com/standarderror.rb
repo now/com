@@ -20,4 +20,8 @@ Expectations do
   expect COM::OperationUnavailableError do
     COM::Error.from(stub(:message => "\nHRESULT error code:0x800401e3\n"))
   end
+
+  expect NameError.new('unknown COM server: A.B') do
+    COM::Error.from(stub(:message => "unknown OLE server: `A.B'\n    HRESULT error code:0x800401f3\n"))
+  end
 end

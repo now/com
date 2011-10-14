@@ -16,6 +16,6 @@ Expectations do
   # ANSI and ISO-8859-1 å
   expect 'c:/å' do
     stub(COM).charset{ 'UTF-8' }
-    Pathname("c:/\xe5").to_com
+    Pathname("c:/\xe5".force_encoding('Windows-1252')).to_com
   end
 end

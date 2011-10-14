@@ -27,20 +27,19 @@ class COM::Object
     begin
       properties.to_hash.each do |property, value|
         saved_properties << [property, com[property]]
-        com[property] = value
+        com.setproperty property, value
       end
       yield
     ensure
       previous_error = $!
       begin
         saved_properties.reverse.each do |property, value|
-          begin com[property] = value; rescue COM::Error; end
+          begin com.setproperty property, value; rescue COM::Error; end
         end
       rescue
         raise if not previous_error
       end
     end
-    self
   end
 
 protected
@@ -48,7 +47,7 @@ protected
   attr_reader :com
 
   def com=(com)
-    @com = com.extend(COM::MethodMissing)
+    @com = WIN32OLE === com ? COM::Wrapper.new(com) : com
   end
 
 private
@@ -56,9 +55,11 @@ private
   def method_missing(method, *args)
     case method.to_s
     when /=\z/
-      com.setproperty($`.encode(COM.charset), *args)
+      com.set_property($`.encode(COM.charset), *args)
     else
       com.invoke(method.to_s.encode(COM.charset), *args)
     end
+  rescue NoMethodError => e
+    raise e, "undefined method `%s' for %p" % [method, self], e.backtrace
   end
 end

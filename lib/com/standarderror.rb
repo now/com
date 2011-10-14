@@ -16,7 +16,7 @@ module COM::StandardError
         (class << self; self; end).class_eval do
           define_method :replace do |error|
             m = pattern.match(error.message)
-            errorclass.new(message ? message : block.call(m))
+            errorclass.new(*Array(message ? message : block.call(m)))
           end
         end
       end
@@ -28,6 +28,10 @@ module COM::StandardError
   define 0x80020006, ::NoMethodError
   define 0x8002000e, ::ArgumentError, 'wrong number of arguments'
   define 0x800401e4, ::ArgumentError
+  define 0x800401f3, ::NameError do |m|
+    name = m[1].sub(/.*`(.*)'\z/, '\\1')
+    ['unknown COM server: %s' % name, name]
+  end
 end
 
 # Sets up mappings between HRESULT errors and COM errors.

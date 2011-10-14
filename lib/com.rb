@@ -9,7 +9,6 @@ module COM
   autoload :Error, 'com/error'
   autoload :Events, 'com/events'
   autoload :Instantiable, 'com/instantiable'
-  autoload :MethodMissing, 'com/methodmissing'
   autoload :Object, 'com/object'
   autoload :PatternError, 'com/patternerror'
   autoload :Version, 'com/version'
@@ -38,7 +37,7 @@ module COM
     # @return [COM::MethodMissing] The running COM object wrapped in a
     #   COM::MethodMissing
     def connect(id)
-      WIN32OLE.connect(id).extend(MethodMissing)
+      Wrapper.new(WIN32OLE.connect(id))
     rescue WIN32OLERuntimeError => e
       raise Error.from(e)
     end
@@ -54,7 +53,7 @@ module COM
     #   create the COM object
     # @return [COM::MethodMissing] The COM object wrapped in a COM::MethodMissing
     def new(id, host = nil)
-      WIN32OLE.new(id, host).extend(MethodMissing)
+      Wrapper.new(WIN32OLE.new(id, host))
     rescue WIN32OLERuntimeError => e
       raise Error.from(e)
     end

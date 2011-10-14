@@ -4,7 +4,7 @@
 class COM::MethodInvocationError < COM::Error
   extend COM::PatternError
 
-  pattern %r{^\s*(\w*)\n
+  pattern %r{^\s*([^\n]*)\n
               \s*OLE\serror\scode:([0-9a-fA-F]+)
               \s+in\s+([^\n]+)\n
               \s*([^\n]+)\n
@@ -17,7 +17,6 @@ class COM::MethodInvocationError < COM::Error
       m = pattern.match(error.message)
       new(m[4], m[1], m[3], m[2].to_i(16), m[5].to_i(16), m[6])
     end
-    protected :replace
   end
 
   # Creates a new COM::MethodInvocationError with _message_.
