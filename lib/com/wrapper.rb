@@ -19,7 +19,7 @@ class COM::Wrapper
   end
 
   def invoke(method, *args)
-    @ole.invoke(method, *args)
+    @ole.invoke(method, *args.map{ |e| e.respond_to?(:to_com) ? e.to_com : e })
   rescue NoMethodError => e
     error = NoMethodError.new("undefined method `%s' for %p" % [method, self],
                               method,
@@ -31,7 +31,7 @@ class COM::Wrapper
   end
 
   def set_property(property, *args)
-    @ole.setproperty(property, *args)
+    @ole.setproperty(property, *args.map{ |e| e.respond_to?(:to_com) ? e.to_com : e })
   rescue NoMethodError => e
     error = NoMethodError.new("undefined property `%s' for %p" % [property, self],
                               property,
@@ -67,6 +67,10 @@ class COM::Wrapper
   def unobserve(event, observer = nil)
     events.unobserve event, observer
     self
+  end
+
+  def to_com
+    @ole
   end
 
   protected

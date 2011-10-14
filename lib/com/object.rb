@@ -52,7 +52,11 @@ class COM::Object
     self
   end
 
-protected
+  def to_com
+    com.to_com
+  end
+
+  protected
 
   attr_reader :com
 
@@ -60,7 +64,7 @@ protected
     @com = WIN32OLE === com ? COM::Wrapper.new(com) : com
   end
 
-private
+  private
 
   def method_missing(method, *args)
     case method.to_s
