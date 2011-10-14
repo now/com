@@ -59,7 +59,21 @@ class COM::Wrapper
     end
   end
 
-private
+  def observe(event, during = nil, observer = nil, &block)
+    events.observe(event, during, observer, &block)
+  end
+
+  def unobserve(event, observer = nil)
+    events.unobserve(event, observer)
+  end
+
+  protected
+
+  def events
+    @events ||= COM::Events.new(@ole)
+  end
+
+  private
 
   def method_missing(method, *args)
     case method.to_s

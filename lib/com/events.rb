@@ -11,32 +11,9 @@ class COM::Events
   # @param [String] interface Name of the COM interface that _com_ implements
   # @param [Array<String>] events Names of events to register (see
   #   {#register})
-  def initialize(com, interface, *events)
-    @observers = {}
-    @events = WIN32OLE_EVENT.new(com, interface)
-    register(*events)
-  end
-
-  # Register _events_.
-  #
-  # @param [Array<String>] events Names of events to register
-  # @return self
-  def register(*events)
-    events.each do |event|
-      saved_verbose, $VERBOSE = $VERBOSE, nil
-      begin
-        @events.on_event event do |*args|
-          @observers[event].reduce({}){ |result, observer|
-            r = observer.call(*args)
-            result.merge!(r) if Hash === r
-          }
-        end
-        @observers[event] = []
-      ensure
-        $VERBOSE = saved_verbose
-      end
-    end
-    self
+  def initialize(com, interface = nil)
+    @interface = WIN32OLE_EVENT.new(com, interface)
+    @events = {}
   end
 
   # Observe _event_ in _block_ during the execution of _during_.
@@ -45,14 +22,39 @@ class COM::Events
   # @param [Proc] during Block during which to observe _event_
   # @yield [*args] Event arguments (specific for each event)
   # @return The result of _during_
-  def observe(event, during, &block)
-    @observers.include? event or
-      raise ArgumentError, 'event has not been registered: %s' % event
-    @observers[event] << block
+  def observe(event, during = nil, observer = nil, &block)
+    observer ||= block
+    raise ArgumentError, 'no block given' unless observer
+    register event, observer
+    return unless during
     begin
       during.call
     ensure
-      @observers[event].delete block
+      unobserve event, observer
     end
+  end
+
+  def unobserve(event, observer = nil)
+    @events[event].delete observer if observer
+    if observer.nil? or @events[event].empty?
+      @interface.off_event event
+      @events.delete event
+    end
+  end
+
+  private
+
+  def register(event, observer)
+    if @events.include? event
+      @events[event] << observer
+      return
+    end
+    @interface.on_event event do |*args|
+      @events[event].reduce({}){ |result, o|
+        r = o.call(*args)
+        result.merge! r if Hash === r
+      }
+    end
+    @events[event] = [observer]
   end
 end

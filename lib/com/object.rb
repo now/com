@@ -27,19 +27,27 @@ class COM::Object
     begin
       properties.to_hash.each do |property, value|
         saved_properties << [property, com[property]]
-        com.setproperty property, value
+        com.set_property property, value
       end
       yield
     ensure
       previous_error = $!
       begin
         saved_properties.reverse.each do |property, value|
-          begin com.setproperty property, value; rescue COM::Error; end
+          begin com.set_property property, value; rescue COM::Error; end
         end
       rescue
         raise if not previous_error
       end
     end
+  end
+
+  def observe(event, during = nil, observer = nil, &block)
+    com.observe(event, during, observer, &block)
+  end
+
+  def unobserve(event, observer = nil)
+    com.unobserve(event, observer)
   end
 
 protected

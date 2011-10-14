@@ -7,7 +7,7 @@ Expectations do
 
   expect mock.to.receive.on_event(:on_something) do |o|
     stub(WIN32OLE_EVENT).new{ o }
-    COM::Events.new(:ole, :interface).register :on_something
+    COM::Events.new(:ole, :interface).observe :on_something do end
   end
 
   expect mock.to.receive.call do |o|
@@ -23,7 +23,6 @@ Expectations do
     end
     stub(WIN32OLE_EVENT).new{ events }
     e = COM::Events.new(:ole, :interface)
-    e.register :on_something
     e.observe(:on_something, proc{ events.trigger }){ o.call }
   end
 end
