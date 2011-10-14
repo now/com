@@ -39,7 +39,7 @@ class COM::Wrapper
     error.set_backtrace e.backtrace.reject{ |s| s.start_with? BacktraceFilter }
     raise error
   rescue WIN32OLERuntimeError => e
-    raise COM::Wrapper.raise_in(method, e)
+    raise COM::Wrapper.raise_in('%s=' % property, e)
   end
 
   def load_constants(into)
