@@ -42,8 +42,12 @@ class COM::Object
     end
   end
 
-  def observe(event, observer = COM::Events::ArgumentMissing, &block)
-    com.observe event, observer, &block
+  def observe(event, observer = (default = true; nil), &block)
+    if default
+      com.observe event, &block
+    else
+      com.observe event, observer, &block
+    end
     self
   end
 

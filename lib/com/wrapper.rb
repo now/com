@@ -59,8 +59,12 @@ class COM::Wrapper
     end
   end
 
-  def observe(event, observer = COM::Events::ArgumentMissing, &block)
-    events.observe event, observer, &block
+  def observe(event, observer = (default = true; nil), &block)
+    if default
+      events.observe event, &block
+    else
+      events.observe event, observer, &block
+    end
     self
   end
 
