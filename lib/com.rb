@@ -6,14 +6,6 @@ WIN32OLE.codepage = WIN32OLE::CP_UTF8
 # COM is an object-oriented wrapper around WIN32OLE.  COM makes it easy to add
 # behavior to WIN32OLE objects, making them easier to work with from Ruby.
 module COM
-  autoload :Error, 'com/error'
-  autoload :Events, 'com/events'
-  autoload :Instantiable, 'com/instantiable'
-  autoload :Object, 'com/object'
-  autoload :PatternError, 'com/patternerror'
-  autoload :Version, 'com/version'
-  autoload :Wrapper, 'com/wrapper'
-
   class << self
     # Gets the iconv character set equivalent of the current COM code page.
     #
@@ -59,15 +51,22 @@ module COM
     end
   end
 
-private
-
   # @private
   COMCodePageToIconvCharset = {
     WIN32OLE::CP_UTF8 => 'UTF-8'
   }.freeze
-end
 
-require 'com/methodinvocationerror'
-require 'com/pathname'
-require 'com/standarderror'
-require 'com/win32ole'
+  require 'com/error.rb'
+  require 'com/object.rb'
+  require 'com/patternerror.rb'
+
+  require 'com/events.rb'
+  require 'com/instantiable.rb'
+  require 'com/methodinvocationerror.rb'
+  require 'com/pathname.rb'
+  require 'com/standarderror.rb'
+  require 'com/win32ole.rb'
+  require 'com/wrapper.rb'
+
+  autoload :Version, 'com/version.rb'
+end
