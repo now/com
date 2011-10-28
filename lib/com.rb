@@ -56,17 +56,19 @@ module COM
     WIN32OLE::CP_UTF8 => 'UTF-8'
   }.freeze
 
-  require 'com/error.rb'
-  require 'com/object.rb'
-  require 'com/patternerror.rb'
+  %w'com/error.rb
+     com/object.rb
+     com/patternerror.rb
 
-  require 'com/events.rb'
-  require 'com/instantiable.rb'
-  require 'com/methodinvocationerror.rb'
-  require 'com/pathname.rb'
-  require 'com/standarderror.rb'
-  require 'com/win32ole.rb'
-  require 'com/wrapper.rb'
+     com/events.rb
+     com/instantiable.rb
+     com/methodinvocationerror.rb
+     com/pathname.rb
+     com/standarderror.rb
+     com/win32ole.rb
+     com/wrapper.rb'.each do |file|
+    load File.expand_path('../%s' % file, __FILE__)
+  end
 
   autoload :Version, 'com/version.rb'
 end
