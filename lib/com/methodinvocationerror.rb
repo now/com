@@ -9,7 +9,7 @@ class COM::MethodInvocationError < COM::Error
               \s+in\s+([^\n]+)\n
               \s*([^\n]+)\n
               \s*HRESULT\serror\scode:0x([0-9a-fA-F]+)[^\n]*\n
-              \s*(.+)$}xu
+              \s*(.+)$}x
 
   class << self
     # This is an internal method used by COM::Error.
