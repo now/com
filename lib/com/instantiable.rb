@@ -64,6 +64,13 @@ class COM::Instantiable < COM::Object
       @constants
     end
 
+    # Typelib to use for loading constants, if it can’t be determined
+    # automatically.
+    def typelib(typelib = nil)
+      @typelib = typelib if typelib
+      @typelib ||= nil
+    end
+
     # Loads constants associated with COM object _com_.  This is an internal
     # method that shouldn’t be called outside of this class.
     #
@@ -72,7 +79,7 @@ class COM::Instantiable < COM::Object
     def load_constants(com)
       return if constants_loaded?
       modul = nesting[-2]
-      com.load_constants modul
+      com.load_constants modul, typelib
       @constants_loaded = true
     end
 

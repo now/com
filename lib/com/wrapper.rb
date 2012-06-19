@@ -42,13 +42,18 @@ class COM::Wrapper
     raise COM::Wrapper.raise_in('%s=' % property, e)
   end
 
-  def load_constants(into)
+  def load_constants(into, typelib = nil)
     saved_verbose, $VERBOSE = $VERBOSE, nil
     begin
       begin
         WIN32OLE.const_load @ole, into
       rescue RuntimeError
-        WIN32OLE_TYPE.enums(program_id).each do |enum|
+        begin
+          @ole.ole_typelib
+        rescue RuntimeError
+          raise unless typelib
+          WIN32OLE_TYPELIB.new(typelib)
+        end.ole_types.select{ |e| e.visible? and e.ole_type == 'Enum' }.each do |enum|
           enum.constants.each do |constant|
             into.const_set constant.const_name, constant.value
           end
